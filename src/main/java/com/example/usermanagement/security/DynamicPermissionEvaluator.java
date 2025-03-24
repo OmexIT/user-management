@@ -13,13 +13,11 @@ public class DynamicPermissionEvaluator implements PermissionEvaluator {
 
 	@Override
 	public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
-		if (auth == null || !(auth.getPrincipal() instanceof UserPrincipal)) {
+		if (auth == null || !(auth.getPrincipal() instanceof UserPrincipal principal)) {
 			return false;
 		}
 
-		UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
-
-		// Check direct permission
+        // Check direct permission
 		String permissionStr = permission.toString();
 		if (principal.hasPermission(permissionStr)) {
 			return true;
