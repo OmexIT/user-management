@@ -1,0 +1,406 @@
+{
+    "info": {
+        "_postman_id": "e8a9b8e0-5f1d-4f1e-8c8e-5f1d4f1e8c8e",
+        "name": "User Management API",
+        "description": "A collection for the User Management API with Keycloak integration",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Get Access Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/x-www-form-urlencoded"
+                            }
+                        ],
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "grant_type",
+                                    "value": "password",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_id",
+                                    "value": "{{client_id}}",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_secret",
+                                    "value": "{{client_secret}}",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "username",
+                                    "value": "{{username}}",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "password",
+                                    "value": "{{password}}",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{keycloak_url}}/realms/{{keycloak_realm}}/protocol/openid-connect/token",
+                            "host": [
+                                "{{keycloak_url}}"
+                            ],
+                            "path": [
+                                "realms",
+                                "{{keycloak_realm}}",
+                                "protocol",
+                                "openid-connect",
+                                "token"
+                            ]
+                        },
+                        "description": "Get an access token from Keycloak using the password grant type"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Refresh Access Token",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/x-www-form-urlencoded"
+                            }
+                        ],
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "grant_type",
+                                    "value": "refresh_token",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_id",
+                                    "value": "{{client_id}}",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "client_secret",
+                                    "value": "{{client_secret}}",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "refresh_token",
+                                    "value": "{{refresh_token}}",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{keycloak_url}}/realms/{{keycloak_realm}}/protocol/openid-connect/token",
+                            "host": [
+                                "{{keycloak_url}}"
+                            ],
+                            "path": [
+                                "realms",
+                                "{{keycloak_realm}}",
+                                "protocol",
+                                "openid-connect",
+                                "token"
+                            ]
+                        },
+                        "description": "Refresh an access token using the refresh token"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for authentication with Keycloak"
+        },
+        {
+            "name": "User Management",
+            "item": [
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/me",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "me"
+                            ]
+                        },
+                        "description": "Get information about the current authenticated user"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get User By External ID",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/users/{{external_user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "users",
+                                "{{external_user_id}}"
+                            ]
+                        },
+                        "description": "Get information about a specific user by their external ID (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Check Permission",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/permissions/check?permission=READ:RESOURCE",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "permissions",
+                                "check"
+                            ],
+                            "query": [
+                                {
+                                    "key": "permission",
+                                    "value": "READ:RESOURCE"
+                                }
+                            ]
+                        },
+                        "description": "Check if the current user has a specific permission"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for user-related operations"
+        },
+        {
+            "name": "Role Management",
+            "item": [
+                {
+                    "name": "Get All Roles",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/roles",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "roles"
+                            ]
+                        },
+                        "description": "Get all roles (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Role",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/roles/{{role_name}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "roles",
+                                "{{role_name}}"
+                            ]
+                        },
+                        "description": "Get a specific role by name (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Role",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"new-role\",\n    \"description\": \"A new role\",\n    \"permissions\": [\n        \"READ:RESOURCE\",\n        \"WRITE:RESOURCE\"\n    ]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/roles",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "roles"
+                            ]
+                        },
+                        "description": "Create a new role (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Role Permissions",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/roles/{{role_name}}/permissions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "roles",
+                                "{{role_name}}",
+                                "permissions"
+                            ]
+                        },
+                        "description": "Get permissions for a specific role (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Add Permissions to Role",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[\n    \"READ:RESOURCE\",\n    \"WRITE:RESOURCE\",\n    \"DELETE:RESOURCE\"\n]"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/roles/{{role_name}}/permissions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "roles",
+                                "{{role_name}}",
+                                "permissions"
+                            ]
+                        },
+                        "description": "Add permissions to a specific role (admin only)"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for role management operations"
+        }
+    ]
+}

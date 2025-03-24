@@ -1,0 +1,53 @@
+# Application Configuration
+spring:
+  application:
+    name: user-management
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/user_management
+    username: app_user
+    password: pa55P0rt
+    driver-class-name: org.postgresql.Driver
+
+  data:
+    redis:
+      password: 'password123'
+      port: 7001
+
+  # Liquibase Configuration
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+
+# Keycloak Configuration
+keycloak:
+  auth-server-url: https://dfs-auth-dev.qena.dev
+  realm: dfs-tests
+  resource: asset-finance
+  public-client: false
+  bearer-only: true
+  admin-client:
+    id: loan-service
+    secret: 5RYQXY8gAJRqVbrT8v7iUplNfMqZ79cV
+
+# JWT Configuration
+spring.security.oauth2.resourceserver.jwt:
+  issuer-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}
+  jwk-set-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
+
+# Caching Configuration
+spring.cache:
+  type: caffeine
+  caffeine.spec: maximumSize=500,expireAfterWrite=300s
+
+# Server Configuration
+server:
+  port: 8080
+
+# Logging Configuration
+logging:
+  level:
+    org.springframework.security: INFO
+    org.keycloak: INFO
+    com.example.usermanagement: DEBUG
