@@ -17,7 +17,7 @@ public class DynamicPermissionEvaluator implements PermissionEvaluator {
 			return false;
 		}
 
-        // Check direct permission
+		// Check direct permission
 		String permissionStr = permission.toString();
 		if (principal.hasPermission(permissionStr)) {
 			return true;

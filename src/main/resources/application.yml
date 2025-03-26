@@ -12,7 +12,7 @@ spring:
 
   data:
     redis:
-      password: 'password123'
+      password: "password123"
       port: 7001
 
   # Liquibase Configuration
@@ -38,8 +38,7 @@ spring.security.oauth2.resourceserver.jwt:
 
 # Caching Configuration
 spring.cache:
-  type: caffeine
-  caffeine.spec: maximumSize=500,expireAfterWrite=300s
+  type: redis
 
 # Server Configuration
 server:
