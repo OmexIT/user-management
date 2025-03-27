@@ -15,7 +15,7 @@ import java.util.HashSet;
  * Mapper interface for converting between Keycloak RoleRepresentation and
  * RoleDTO Using MapStruct for automatic code generation
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface RoleMapper {
 
 	/**

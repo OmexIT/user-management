@@ -24,7 +24,7 @@ spring:
 keycloak:
   auth-server-url: https://dfs-auth-dev.qena.dev
   realm: dfs-tests
-  resource: asset-finance
+  resource: loan-service
   public-client: false
   bearer-only: true
   admin-client:
@@ -47,6 +47,7 @@ server:
 # Logging Configuration
 logging:
   level:
-    org.springframework.security: INFO
+    org.springframework.security: DEBUG
     org.keycloak: INFO
     com.example.usermanagement: DEBUG
+    com.example.usermanagement.security: TRACE

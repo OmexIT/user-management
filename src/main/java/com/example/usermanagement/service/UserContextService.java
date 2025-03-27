@@ -100,6 +100,6 @@ public class UserContextService {
 		}
 
 		// Default
-		return UserType.CUSTOMER;
+		return UserType.PORTAL;
 	}
 }

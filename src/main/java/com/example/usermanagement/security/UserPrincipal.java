@@ -30,4 +30,10 @@ public class UserPrincipal {
 	public boolean hasAttribute(String name) {
 		return attributes.containsKey(name);
 	}
+
+	@Override
+	public String toString() {
+		return "UserPrincipal{" + "subject='" + subject + '\'' + ", email='" + email + '\'' + ", roles=" + roles
+				+ ", permissions=" + permissions + ", attributes=" + attributes + '}';
+	}
 }

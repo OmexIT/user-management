@@ -25,7 +25,12 @@ public class PermissionMappingService {
 	 */
 	@Cacheable(key = "#roleName")
 	public Set<String> getPermissionsForRole(String roleName) {
-		return keycloakRoleService.getRolePermissions(roleName);
+		try {
+			return keycloakRoleService.getRolePermissions(roleName);
+		} catch (Exception e) {
+			log.warn("Failed to get permissions for role: {}. Error: {}", roleName, e.getMessage());
+			return Set.of(); // Return empty set instead of throwing exception
+		}
 	}
 
 	/**
