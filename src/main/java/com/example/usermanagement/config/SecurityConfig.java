@@ -28,9 +28,9 @@ public class SecurityConfig {
 				oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(keycloakJwtAuthenticationConverter)))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/public/**").permitAll()
-						.requestMatchers("/api/customers/**").hasRole("CUSTOMER").requestMatchers("/api/merchants/**")
-						.hasRole("MERCHANT").requestMatchers("/api/admin/**").hasRole("ADMIN").anyRequest()
-						.authenticated());
+						.requestMatchers("/api/customers/**").hasAnyRole("CUSTOMER", "ADMIN")
+						.requestMatchers("/api/merchants/**").hasAnyRole("MERCHANT", "ADMIN")
+						.requestMatchers("/api/admin/**").hasRole("ADMIN").anyRequest().authenticated());
 		return http.build();
 	}
 

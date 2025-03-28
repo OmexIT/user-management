@@ -25,8 +25,8 @@ public class KeycloakConfig {
 
 	@Bean
 	public Keycloak keycloak() {
-		return KeycloakBuilder.builder().serverUrl(authServerUrl).realm("master") // Admin operations are performed in
-																					// the master realm
+		return KeycloakBuilder.builder().serverUrl(authServerUrl).realm(realm) // Admin operations are performed in
+																				// the master realm
 				.clientId(adminClientId).clientSecret(adminClientSecret).grantType(OAuth2Constants.CLIENT_CREDENTIALS)
 				.build();
 	}

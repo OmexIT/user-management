@@ -11,6 +11,31 @@
             "item": [
                 {
                     "name": "Get Access Token",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Parse the response JSON",
+                                    "var jsonData = pm.response.json();",
+                                    "",
+                                    "// Store tokens in environment variables if successful",
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                                    "    pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
+                                    "    ",
+                                    "    // Calculate token expiry time",
+                                    "    var expiryDate = new Date();",
+                                    "    expiryDate.setSeconds(expiryDate.getSeconds() + jsonData.expires_in);",
+                                    "    pm.environment.set(\"token_expiry\", expiryDate.toISOString());",
+                                    "    ",
+                                    "    console.log(\"Access token stored. Expires at: \" + expiryDate.toISOString());",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -68,6 +93,31 @@
                 },
                 {
                     "name": "Refresh Access Token",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Parse the response JSON",
+                                    "var jsonData = pm.response.json();",
+                                    "",
+                                    "// Store tokens in environment variables if successful",
+                                    "if (pm.response.code === 200) {",
+                                    "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                                    "    pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
+                                    "    ",
+                                    "    // Calculate token expiry time",
+                                    "    var expiryDate = new Date();",
+                                    "    expiryDate.setSeconds(expiryDate.getSeconds() + jsonData.expires_in);",
+                                    "    pm.environment.set(\"token_expiry\", expiryDate.toISOString());",
+                                    "    ",
+                                    "    console.log(\"Access token refreshed. Expires at: \" + expiryDate.toISOString());",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -401,6 +451,489 @@
                 }
             ],
             "description": "Endpoints for role management operations"
+        },
+        {
+            "name": "Merchant Management",
+            "item": [
+                {
+                    "name": "Create Merchant",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Store merchant ID in environment variable if successful",
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"merchant_id\", jsonData.id);",
+                                    "    pm.environment.set(\"merchant_code\", jsonData.merchantCode);",
+                                    "    console.log(\"Stored merchant_id: \" + jsonData.id);",
+                                    "    console.log(\"Stored merchant_code: \" + jsonData.merchantCode);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"merchantCode\": \"MERCH001\",\n    \"businessName\": \"Example Merchant\",\n    \"status\": \"ACTIVE\",\n    \"initialUser\": {\n        \"email\": \"merchant@example.com\",\n        \"displayName\": \"Merchant Admin\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/merchants",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "merchants"
+                            ]
+                        },
+                        "description": "Create a new merchant with initial user (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Merchants",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/merchants",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "merchants"
+                            ]
+                        },
+                        "description": "Get all merchants (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Merchant by ID",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/merchants/{{merchant_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "merchants",
+                                "{{merchant_id}}"
+                            ]
+                        },
+                        "description": "Get merchant by ID (admin or merchant)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Merchant by Code",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/merchants/code/{{merchant_code}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "merchants",
+                                "code",
+                                "{{merchant_code}}"
+                            ]
+                        },
+                        "description": "Get merchant by code (admin or merchant)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Merchant",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"businessName\": \"Updated Merchant Name\",\n    \"status\": \"ACTIVE\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/merchants/{{merchant_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "merchants",
+                                "{{merchant_id}}"
+                            ]
+                        },
+                        "description": "Update merchant details (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Add User to Merchant",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"merchantId\": {{merchant_id}},\n    \"role\": \"OPERATOR\",\n    \"user\": {\n        \"email\": \"merchant-operator@example.com\",\n        \"displayName\": \"Merchant Operator\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/merchants/{{merchant_id}}/users",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "merchants",
+                                "{{merchant_id}}",
+                                "users"
+                            ]
+                        },
+                        "description": "Add a user to a merchant (admin or merchant admin)"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for merchant management operations"
+        },
+        {
+            "name": "Customer Management",
+            "item": [
+                {
+                    "name": "Create Customer",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "// Store customer ID in environment variable if successful",
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"customer_id\", jsonData.id);",
+                                    "    pm.environment.set(\"customer_number\", jsonData.customerNumber);",
+                                    "    console.log(\"Stored customer_id: \" + jsonData.id);",
+                                    "    console.log(\"Stored customer_number: \" + jsonData.customerNumber);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"customerNumber\": \"CUST001\",\n    \"name\": \"Example Customer\",\n    \"type\": \"INDIVIDUAL\",\n    \"user\": {\n        \"email\": \"customer@example.com\",\n        \"displayName\": \"Customer User\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/customers",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "customers"
+                            ]
+                        },
+                        "description": "Create a new customer with user (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Customers",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/customers",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "customers"
+                            ]
+                        },
+                        "description": "Get all customers (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Customer by ID",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/customers/{{customer_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "customers",
+                                "{{customer_id}}"
+                            ]
+                        },
+                        "description": "Get customer by ID (admin or customer)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Customer by Number",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/customers/number/{{customer_number}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "customers",
+                                "number",
+                                "{{customer_number}}"
+                            ]
+                        },
+                        "description": "Get customer by number (admin or customer)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Customer by User ID",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/customers/user/{{user_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "customers",
+                                "user",
+                                "{{user_id}}"
+                            ]
+                        },
+                        "description": "Get customer by user ID (admin or customer)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Customer",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Updated Customer Name\",\n    \"type\": \"INDIVIDUAL\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/customers/{{customer_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "customers",
+                                "{{customer_id}}"
+                            ]
+                        },
+                        "description": "Update customer details (admin only)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Customer Dashboard",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{access_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/customers/dashboard",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "customers",
+                                "dashboard"
+                            ]
+                        },
+                        "description": "Customer dashboard endpoint (customer only)"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints for customer management operations"
         }
     ]
 }
