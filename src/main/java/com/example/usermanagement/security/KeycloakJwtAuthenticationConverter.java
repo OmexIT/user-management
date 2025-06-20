@@ -32,9 +32,9 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
 		log.debug("Converting JWT token: {}", jwt);
 
 		// Extract roles directly from the JWT token
-//		Set<String> roles = extractRoles(jwt);
-//		log.debug("Extracted roles: {}", roles);
-		
+		// Set<String> roles = extractRoles(jwt);
+		// log.debug("Extracted roles: {}", roles);
+
 		Set<String> roles = extractClientRoles(jwt);
 
 		// Filter out default roles to avoid Keycloak API calls for them
@@ -47,13 +47,14 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
 		log.debug("Created authorities: {}", authorities);
 
 		// Get permissions only for custom roles
-//		Set<String> permissions = customRoles.isEmpty()
-//				? Set.of()
-//				: permissionMappingService.getPermissionsForRoles(customRoles);
-//		log.debug("Retrieved permissions: {}", permissions);
+		// Set<String> permissions = customRoles.isEmpty()
+		// ? Set.of()
+		// : permissionMappingService.getPermissionsForRoles(customRoles);
+		// log.debug("Retrieved permissions: {}", permissions);
 
 		// Get permissions defined in the token.
-		Set<String> permissions = new HashSet<>(Arrays.stream(jwt.getClaim("permissions").toString().split(",")).toList());
+		Set<String> permissions = new HashSet<>(
+				Arrays.stream(jwt.getClaim("permissions").toString().split(",")).toList());
 
 		// Add permissions as authorities
 		Set<GrantedAuthority> allAuthorities = new HashSet<>(authorities);
