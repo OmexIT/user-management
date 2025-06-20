@@ -12,8 +12,8 @@ spring:
 
   data:
     redis:
-      password: "password123"
-      port: 7001
+      port: 6379
+      host: "localhost"
 
   # Liquibase Configuration
   liquibase:
@@ -23,13 +23,13 @@ spring:
 # Keycloak Configuration
 keycloak:
   auth-server-url: https://dfs-auth-dev.qena.dev
-  realm: dfs-tests
-  resource: loan-service
+  realm: user-management
+  resource: webClient
   public-client: false
   bearer-only: true
   admin-client:
-    id: loan-service
-    secret: 5RYQXY8gAJRqVbrT8v7iUplNfMqZ79cV
+    id: webClient
+    secret: 38cGbFmarnZjWFo8Za3dUPGt2qdscGpq
 
 # JWT Configuration
 spring.security.oauth2.resourceserver.jwt:
