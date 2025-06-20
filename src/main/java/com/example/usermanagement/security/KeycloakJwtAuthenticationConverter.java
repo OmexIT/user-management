@@ -32,8 +32,10 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
 		log.debug("Converting JWT token: {}", jwt);
 
 		// Extract roles directly from the JWT token
-		Set<String> roles = extractRoles(jwt);
-		log.debug("Extracted roles: {}", roles);
+//		Set<String> roles = extractRoles(jwt);
+//		log.debug("Extracted roles: {}", roles);
+		
+		Set<String> roles = extractClientRoles(jwt);
 
 		// Filter out default roles to avoid Keycloak API calls for them
 		Set<String> customRoles = filterDefaultRoles(roles);
@@ -45,10 +47,13 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
 		log.debug("Created authorities: {}", authorities);
 
 		// Get permissions only for custom roles
-		Set<String> permissions = customRoles.isEmpty()
-				? Set.of()
-				: permissionMappingService.getPermissionsForRoles(customRoles);
-		log.debug("Retrieved permissions: {}", permissions);
+//		Set<String> permissions = customRoles.isEmpty()
+//				? Set.of()
+//				: permissionMappingService.getPermissionsForRoles(customRoles);
+//		log.debug("Retrieved permissions: {}", permissions);
+
+		// Get permissions defined in the token.
+		Set<String> permissions = new HashSet<>(Arrays.stream(jwt.getClaim("permissions").toString().split(",")).toList());
 
 		// Add permissions as authorities
 		Set<GrantedAuthority> allAuthorities = new HashSet<>(authorities);
@@ -88,9 +93,26 @@ public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, Abstra
 		Set<String> roles = new HashSet<>();
 
 		try {
-			Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+			Map<String, Object> realmAccess = jwt.getClaim("webClient");
 			if (realmAccess != null && realmAccess.containsKey("roles")) {
 				List<String> rolesList = (List<String>) realmAccess.get("roles");
+				roles.addAll(rolesList);
+			}
+		} catch (Exception e) {
+			log.error("Error extracting roles from JWT token", e);
+		}
+
+		return roles;
+	}
+
+	private Set<String> extractClientRoles(Jwt jwt) {
+		Set<String> roles = new HashSet<>();
+
+		try {
+			Map<String, Object> client = jwt.getClaim("resource_access");
+			Map<Object, Object> clientRoles = (Map<Object, Object>) client.get(jwt.getClaims().get("azp"));
+			if (client != null && clientRoles.containsKey("roles")) {
+				List<String> rolesList = (List<String>) clientRoles.get("roles");
 				roles.addAll(rolesList);
 			}
 		} catch (Exception e) {
