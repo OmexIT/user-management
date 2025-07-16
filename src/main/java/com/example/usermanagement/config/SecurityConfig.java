@@ -1,7 +1,7 @@
 package com.example.usermanagement.config;
 
-import com.example.usermanagement.security.DynamicPermissionEvaluator;
-import com.example.usermanagement.security.KeycloakJwtAuthenticationConverter;
+import com.example.usermanagement.shared.security.DynamicPermissionEvaluator;
+import com.example.usermanagement.shared.security.KeycloakJwtAuthenticationConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
